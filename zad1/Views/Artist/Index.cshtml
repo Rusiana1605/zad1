@@ -1,0 +1,53 @@
+﻿@model IEnumerable<zad1.ViewModels.Artist.ArtistIndexViewModel>
+
+@{
+    ViewData["Title"] = "Artists";
+}
+
+<h1>Artists</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">
+        Add Artist
+    </a>
+    <a asp-controller="Song" asp-action="Index" class="btn btn-secondary">View Songs</a>
+</p>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Genre</th>
+            <th>Founded Year</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var artist in Model)
+        {
+            <tr>
+                <td>@artist.Name</td>
+                <td>@artist.Genre</td>
+                <td>@artist.FoundedYear</td>
+                <td>
+                    <a asp-action="Details"
+                       asp-route-id="@artist.Id">
+                        Details
+                    </a> |
+
+                    <a asp-action="Edit"
+                       asp-route-id="@artist.Id">
+                        Edit
+                    </a> |
+
+                    <a asp-action="Delete"
+                       asp-route-id="@artist.Id">
+                        Delete
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

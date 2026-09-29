@@ -1,0 +1,70 @@
+﻿@model zad1.ViewModels.Song.SongCreateViewModel
+
+@{
+    ViewData["Title"] = "Create Song";
+}
+
+<h1>Create Song</h1>
+
+<form asp-action="Create" method="post">
+
+    <div class="form-group">
+        <label asp-for="Title"></label>
+
+        <input asp-for="Title"
+               class="form-control" />
+
+        <span asp-validation-for="Title"
+              class="text-danger"></span>
+    </div>
+
+    <br />
+
+    <div class="form-group">
+        <label asp-for="ReleaseYear">
+            Release Year
+        </label>
+
+        <input asp-for="ReleaseYear"
+               class="form-control" />
+
+        <span asp-validation-for="ReleaseYear"
+              class="text-danger"></span>
+    </div>
+
+    <br />
+
+    <div class="form-group">
+
+        <label asp-for="ArtistId">
+            Artist
+        </label>
+
+        <select asp-for="ArtistId"
+                asp-items="Model.Artists"
+                class="form-control">
+
+            <option value="">
+                -- Select Artist --
+            </option>
+
+        </select>
+
+        <span asp-validation-for="ArtistId"
+              class="text-danger"></span>
+
+    </div>
+
+    <br />
+
+    <button type="submit"
+            class="btn btn-primary">
+        Create
+    </button>
+
+    <a asp-action="Index"
+       class="btn btn-secondary">
+        Back
+    </a>
+
+</form>

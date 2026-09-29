@@ -1,0 +1,72 @@
+﻿@model zad1.ViewModels.Song.SongEditViewModel
+
+@{
+    ViewData["Title"] = "Edit Song";
+}
+
+<h1>Edit Song</h1>
+
+<form asp-action="Edit" method="post">
+
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label asp-for="Title"></label>
+
+        <input asp-for="Title"
+               class="form-control" />
+
+        <span asp-validation-for="Title"
+              class="text-danger"></span>
+    </div>
+
+    <br />
+
+    <div class="form-group">
+        <label asp-for="ReleaseYear">
+            Release Year
+        </label>
+
+        <input asp-for="ReleaseYear"
+               class="form-control" />
+
+        <span asp-validation-for="ReleaseYear"
+              class="text-danger"></span>
+    </div>
+
+    <br />
+
+    <div class="form-group">
+
+        <label asp-for="ArtistId">
+            Artist
+        </label>
+
+        <select asp-for="ArtistId"
+                asp-items="Model.Artists"
+                class="form-control">
+
+            <option value="">
+                -- Select Artist --
+            </option>
+
+        </select>
+
+        <span asp-validation-for="ArtistId"
+              class="text-danger"></span>
+
+    </div>
+
+    <br />
+
+    <button type="submit"
+            class="btn btn-primary">
+        Save
+    </button>
+
+    <a asp-action="Index"
+       class="btn btn-secondary">
+        Back
+    </a>
+
+</form>

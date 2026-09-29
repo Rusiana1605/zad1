@@ -1,0 +1,68 @@
+﻿@model zad1.ViewModels.Song.SongDetailsViewModel
+
+@{
+    ViewData["Title"] = "Song Details";
+}
+
+<h1>Song Details</h1>
+
+<hr />
+
+<dl class="row">
+
+    <dt class="col-sm-3">
+        Title
+    </dt>
+
+    <dd class="col-sm-9">
+        @Model.Title
+    </dd>
+
+
+    <dt class="col-sm-3">
+        Release Year
+    </dt>
+
+    <dd class="col-sm-9">
+        @Model.ReleaseYear
+    </dd>
+
+
+    <dt class="col-sm-3">
+        Artist
+    </dt>
+
+    <dd class="col-sm-9">
+        @Model.ArtistName
+    </dd>
+
+
+    <dt class="col-sm-3">
+        Genre
+    </dt>
+
+    <dd class="col-sm-9">
+        @Model.ArtistGenre
+    </dd>
+
+
+    <dt class="col-sm-3">
+        Artist Founded Year
+    </dt>
+
+    <dd class="col-sm-9">
+        @Model.ArtistFoundedYear
+    </dd>
+
+</dl>
+
+<a asp-action="Edit"
+   asp-route-id="@Model.Id"
+   class="btn btn-warning">
+    Edit
+</a>
+
+<a asp-action="Index"
+   class="btn btn-secondary">
+    Back
+</a>
