@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Data_Proj.Entities.Song>
+﻿@model IEnumerable<zad1.ViewModels.Song.SongIndexViewModel>
 
 <h2>Songs</h2>
 
@@ -21,7 +21,7 @@
             <tr>
                 <td>@item.Title</td>
                 <td>@item.ReleaseYear</td>
-                <td>@item.ArtistId</td> <!-- Добавено име на артиста -->
+                <td>@item.ArtistName</td> <!-- Добавено име на артиста -->
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a> |

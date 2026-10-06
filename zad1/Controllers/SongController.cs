@@ -20,8 +20,15 @@ namespace zad1.Controllers
         public async Task<IActionResult> Index()
         {
             var songs = await context.Songs
-                .Include(s => s.Artist)
-                .ToListAsync();
+             .Include(s => s.Artist) 
+              .Select(s => new SongIndexViewModel
+            {
+             Id = s.Id,
+             Title = s.Title,
+             ReleaseYear = s.ReleaseYear,
+             ArtistName = s.Artist.Name
+            })
+             .ToListAsync();
             return View(songs);
         }
 
