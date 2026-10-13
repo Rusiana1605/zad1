@@ -18,5 +18,26 @@ namespace Data_Proj
 
         public DbSet<Artist> Artists { get; set; }
         public DbSet<Song> Songs { get; set; }
+        public DbSet<Playlist> Playlists { get; set; }
+        public DbSet<SongPlaylist> SongPlaylists { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+         
+            modelBuilder.Entity<SongPlaylist>()
+                .HasKey(sp => new { sp.SongId, sp.PlaylistId });
+
+            modelBuilder.Entity<SongPlaylist>()
+                .HasOne(sp => sp.Song)
+                .WithMany() 
+                .HasForeignKey(sp => sp.SongId);
+
+            modelBuilder.Entity<SongPlaylist>()
+                .HasOne(sp => sp.Playlist)
+                .WithMany(p => p.SongPlaylists)
+                .HasForeignKey(sp => sp.PlaylistId);
+        }
     }
 }

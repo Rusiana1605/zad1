@@ -13,5 +13,6 @@
         public string ArtistGenre { get; set; }
 
         public int ArtistFoundedYear { get; set; }
+        public List<string> Playlists { get; set; } = new List<string>();
     }
 }

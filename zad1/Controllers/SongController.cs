@@ -3,6 +3,7 @@ using Data_Proj.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Numerics;
 using zad1.ViewModels.Artist;
 using zad1.ViewModels.Song;
 
@@ -69,8 +70,11 @@ namespace zad1.Controllers
             if (id == null) return NotFound();
 
             var song = await context.Songs
-                .Include(s => s.Artist)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                 .Include(d => d.Artist)
+                .Include(d => d.SongPlaylists)
+                .ThenInclude(dp => dp.Playlist)
+                .FirstOrDefaultAsync(d => d.Id == id);
+
             if (song == null) return NotFound();
 
             var songViewModel = new SongDetailsViewModel
@@ -80,9 +84,10 @@ namespace zad1.Controllers
                 ReleaseYear = song.ReleaseYear,
                 ArtistName = song.Artist.Name,
                 ArtistGenre = song.Artist.Genre,
-                ArtistFoundedYear = song.Artist.FoundedYear
+                ArtistFoundedYear = song.Artist.FoundedYear,
+                Playlists = song.SongPlaylists
+                .Select(dp => $"{dp.Playlist.Id} {dp.Playlist.Title}").ToList()
             };
-
             return View(songViewModel);
         }
 
@@ -101,6 +106,7 @@ namespace zad1.Controllers
                 ArtistId = song.ArtistId,
                 Artists = await GetArtistsSelectListAsync()
             };
+
 
             return View(viewModel);
         }

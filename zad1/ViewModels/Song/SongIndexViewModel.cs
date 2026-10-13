@@ -8,5 +8,6 @@
 
         public int ReleaseYear { get; set; }
         public string ArtistName { get; set; }
+        public List<string> Songs { get; set; } = new List<string>();
     }
 }

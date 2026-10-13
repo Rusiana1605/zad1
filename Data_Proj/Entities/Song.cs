@@ -22,5 +22,6 @@ namespace Data_Proj.Entities
         public int ArtistId { get; set; }
 
         public Artist Artist { get; set; }
+        public ICollection<SongPlaylist> SongPlaylists { get; set; } = new List<SongPlaylist>();
     }
 }
