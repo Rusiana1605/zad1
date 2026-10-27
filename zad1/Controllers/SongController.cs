@@ -3,6 +3,7 @@ using Data_Proj.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Proj.Core.Interfaces;
 using System.Numerics;
 using zad1.ViewModels.Artist;
 using zad1.ViewModels.Song;
@@ -11,25 +12,29 @@ namespace zad1.Controllers
 {
     public class SongController : Controller
     {
-        private readonly MusicDbContext context;
+        private readonly ISongService songserv;
+        private readonly IArtistSevice artistserv;
 
-        public SongController(MusicDbContext context)
+        public SongController(ISongService songserv, IArtistSevice artistserv)
         {
-            this.context = context;
+            this.songserv = songserv;
+            this.artistserv = artistserv;
         }
 
         public async Task<IActionResult> Index()
         {
-            var songs = await context.Songs
-             .Include(s => s.Artist) 
-              .Select(s => new SongIndexViewModel
+            var songs = await songserv.GetAllSongAsync();
+            var model = new List<SongIndexViewModel>();
+            foreach (var song in songs)
             {
-             Id = s.Id,
-             Title = s.Title,
-             ReleaseYear = s.ReleaseYear,
-             ArtistName = s.Artist.Name
-            })
-             .ToListAsync();
+                model.Add(new SongIndexViewModel
+                {
+                    Id = song.Id,
+                    Title = song.Title,
+                    ReleaseYear = song.ReleaseYear,
+                    ArtistName = song.Artist.Name
+                });
+            }
             return View(songs);
         }
 
@@ -55,8 +60,7 @@ namespace zad1.Controllers
                     ArtistId = model.ArtistId
                 };
 
-                context.Songs.Add(song);
-                await context.SaveChangesAsync();
+               await songserv.AddSongAsync(song);
                 return RedirectToAction(nameof(Index));
             }
 
@@ -65,15 +69,11 @@ namespace zad1.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
             if (id == null) return NotFound();
 
-            var song = await context.Songs
-                 .Include(d => d.Artist)
-                .Include(d => d.SongPlaylists)
-                .ThenInclude(dp => dp.Playlist)
-                .FirstOrDefaultAsync(d => d.Id == id);
+            var song = await songserv.GeSongDetailAsync(id);
 
             if (song == null) return NotFound();
 
@@ -91,11 +91,11 @@ namespace zad1.Controllers
             return View(songViewModel);
         }
 
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
             if (id == null) return NotFound();
 
-            var song = await context.Songs.FindAsync(id);
+            var song = await songserv.GetSongByIdAsync(id);
             if (song == null) return NotFound();
 
             var viewModel = new SongEditViewModel
@@ -119,15 +119,14 @@ namespace zad1.Controllers
 
             if (ModelState.IsValid)
             {
-                var song = await context.Songs.FindAsync(id);
+                var song = await songserv.GetSongByIdAsync(id);
                 if (song == null) return NotFound();
 
                 song.Title = model.Title;
                 song.ReleaseYear = model.ReleaseYear;
                 song.ArtistId = model.ArtistId;
 
-                context.Update(song);
-                await context.SaveChangesAsync();
+                await songserv.UpdateSongAsync(song);
                 return RedirectToAction(nameof(Index));
             }
 
@@ -135,13 +134,11 @@ namespace zad1.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
             if (id == null) return NotFound();
 
-            var song = await context.Songs
-                .Include(s => s.Artist)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var song = await songserv.GetSongByIdAsync(id);
             
             if (song == null) return NotFound();
 
@@ -158,11 +155,10 @@ namespace zad1.Controllers
         //[ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var song = await context.Songs.FindAsync(id);
+            var song = await songserv.GetSongByIdAsync(id);
             if (song != null)
             {
-                context.Songs.Remove(song);
-                await context.SaveChangesAsync();
+                await songserv.DeleteSongAsync(id);
             }
             
             return RedirectToAction(nameof(Index));
@@ -171,13 +167,15 @@ namespace zad1.Controllers
         // Асинхронен помощен метод за извличане на списъка с артисти
         private async Task<IEnumerable<SelectListItem>> GetArtistsSelectListAsync()
         {
-            return await context.Artists
-                .Select(a => new SelectListItem
-                {
-                    Value = a.Id.ToString(),
-                    Text = a.Name
-                })
-                .ToListAsync();
+            var artists = await this.artistserv.GetAllArtistsAsync();
+
+            return artists.Select(a => new SelectListItem
+            {
+                Value = a.Id.ToString(),
+                Text = a.Name
+            })
+            .ToList();
         }
+        
     }
 }

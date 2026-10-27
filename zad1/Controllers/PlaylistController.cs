@@ -3,23 +3,23 @@ using Data_Proj.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Proj.Core.Interfaces;
 using zad1.ViewModels.Playlist;
 
 namespace zad1.Controllers
 {
     public class PlaylistController : Controller
     {
-        private readonly MusicDbContext context;
-        public PlaylistController(MusicDbContext context)
+        private readonly IPlaylistService playserv;
+        private readonly ISongService songserv;
+        public PlaylistController(IPlaylistService playserv, ISongService songserv)
         {
-            this.context = context;
+            this.playserv = playserv;
+            this.songserv = songserv;
         }
         public async Task<IActionResult> Index()
         {
-            var patients = await context.Playlists
-                .Include(p => p.SongPlaylists)
-                .ThenInclude(d => d.Song)
-                .ToListAsync();
+            var patients = await playserv.GetAllPlaylistsAsync();
             var model = new List<PlaylistIndexViewModel>();
             foreach (var patient in patients)
             {
@@ -43,20 +43,19 @@ namespace zad1.Controllers
         {
             if (ModelState.IsValid)
             {
-                var patient = new Playlist
+                var playlist = new Playlist
                 {
                     Title = model.Title,
                     Description = model.Description,
                 };
-                foreach (var doctorId in model.SongsIds)
+                foreach (var songId in model.SongsIds)
                 {
-                    patient.SongPlaylists.Add(new SongPlaylist
+                    playlist.SongPlaylists.Add(new SongPlaylist
                     {
-                        SongId = doctorId,
+                        SongId = songId,
                     });
                 }
-                context.Playlists.Add(patient);
-                await context.SaveChangesAsync();
+               await playserv.AddPlaylistAsync(playlist);
                 return RedirectToAction(nameof(Index));
             }
             await LoadSongs(model.SongsIds);
@@ -64,19 +63,17 @@ namespace zad1.Controllers
         }
         public async Task LoadSongs(List<int> selectedSongs = null) // Helper method to load doctors for the multi-select list.  
         {
-            var doctors = await context.Songs.Select(d => new
+            var doctors = await songserv.GetAllSongAsync();
+            var dd = doctors.Select(d => new
             {
                 d.Id,
                 Name = d.Title + " " + d.ReleaseYear
-            }).ToListAsync();
+            }).ToList();
             ViewBag.Songs = new MultiSelectList(doctors, "Id", "Name", selectedSongs);
         }
         public async Task<IActionResult> Details(int id)
         {
-            var patient = await context.Playlists
-                .Include(p => p.SongPlaylists)
-                .ThenInclude(dp => dp.Song)
-                .FirstOrDefaultAsync(p => p.Id == id);
+            var patient = await playserv.GetPlaylistWithSongsAsync(id);
             if (patient == null)
             {
                 return NotFound();
@@ -92,9 +89,7 @@ namespace zad1.Controllers
         }
         public async Task<IActionResult> Edit(int id)
         {
-            var patient = await context.Playlists
-                .Include(p => p.SongPlaylists)
-                .FirstOrDefaultAsync(p => p.Id == id);
+            var patient = await playserv.GetPlaylistWithSongsAsync(id);
             if (patient == null)
             {
                 return NotFound();
@@ -118,9 +113,7 @@ namespace zad1.Controllers
             }
             if (ModelState.IsValid)
             {
-                var patient = await context.Playlists
-                    .Include(p => p.SongPlaylists)
-                    .FirstOrDefaultAsync(p => p.Id == model.Id);
+                var patient = await playserv.GetPlaylistWithSongsAsync(id);
                 if (patient == null)
                 {
                     return NotFound();
@@ -137,7 +130,7 @@ namespace zad1.Controllers
                         PlaylistId = patient.Id
                     });
                 }
-                await context.SaveChangesAsync();
+                await playserv.UpdatePlaylistAsync(patient, model.SongIds);
                 return RedirectToAction(nameof(Index));
             }
             await LoadSongs(model.SongIds);
@@ -145,13 +138,12 @@ namespace zad1.Controllers
         }
         public async Task<IActionResult> Delete(int id)
         {
-            var patient = await context.Playlists.FindAsync(id);
+            var patient = await playserv.GetPlaylistByIdAsync(id);
             if (patient == null)
             {
                 return NotFound();
             }
-            context.Playlists.Remove(patient);
-            await context.SaveChangesAsync();
+            await playserv.DeletePlaylistAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
@@ -159,11 +151,10 @@ namespace zad1.Controllers
         [ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var patient = await context.Playlists.FindAsync(id);
+            var patient = await playserv.GetPlaylistByIdAsync(id);
             if (patient != null)
             {
-                context.Playlists.Remove(patient);
-                await context.SaveChangesAsync();
+                await playserv.DeletePlaylistAsync(id);
             }
 
             return RedirectToAction(nameof(Index));

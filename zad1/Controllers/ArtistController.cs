@@ -1,31 +1,35 @@
-﻿using Data_Proj;
-using Data_Proj.Entities;
+﻿using Data_Proj.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Proj.Core.Interfaces;
+using Proj.Core.Services;
 using zad1.ViewModels.Artist;
 
 namespace zad1.Controllers
 {
     public class ArtistController : Controller
     {
-        private readonly MusicDbContext context;
+        private readonly IArtistSevice artistserv;
 
-        public ArtistController(MusicDbContext context)
+        public ArtistController(IArtistSevice artistserv)
         {
-            this.context = context;
+            this.artistserv = artistserv;
         }
 
         public async Task<IActionResult> Index()
         {
-            var artists = await context.Artists
-                .Select(a => new ArtistIndexViewModel
+            var artists = await artistserv.GetAllArtistsAsync();
+            var model = new List<ArtistIndexViewModel>();
+            foreach (var artist in artists)
+            {
+                model.Add(new ArtistIndexViewModel
                 {
-                    Id = a.Id,
-                    Name = a.Name,
-                    Genre = a.Genre,
-                    FoundedYear = a.FoundedYear
-                })
-                .ToListAsync();
+                    Id = artist.Id,
+                    Name = artist.Name,
+                    Genre = artist.Genre,
+                    FoundedYear = artist.FoundedYear
+                });
+            }
 
             return View(artists);
         }
@@ -37,8 +41,7 @@ namespace zad1.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(
-            ArtistCreateViewModel model)
+        public async Task<IActionResult> Create(ArtistCreateViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -52,17 +55,13 @@ namespace zad1.Controllers
                 FoundedYear = model.FoundedYear
             };
 
-            context.Artists.Add(artist);
-            await context.SaveChangesAsync();
-
+            await artistserv.AddArtistAsync(artist);
             return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> Details(int id)
         {
-            var artist = await context.Artists
-                .Include(a => a.Songs)
-                .FirstOrDefaultAsync(a => a.Id == id);
+            var artist = await artistserv.GetArtistByIdAsync(id);
 
             if (artist == null)
             {
@@ -82,8 +81,7 @@ namespace zad1.Controllers
 
         public async Task<IActionResult> Edit(int id)
         {
-            var artist = await context.Artists
-                .FindAsync(id);
+            var artist = await artistserv.GetArtistByIdAsync(id);
 
             if (artist == null)
             {
@@ -103,16 +101,14 @@ namespace zad1.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(
-            ArtistEditViewModel model)
+        public async Task<IActionResult> Edit(ArtistEditViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            var artist = await context.Artists
-                .FindAsync(model.Id);
+            var artist = await artistserv.GetArtistByIdAsync(model.Id);
 
             if (artist == null)
             {
@@ -123,15 +119,14 @@ namespace zad1.Controllers
             artist.Genre = model.Genre;
             artist.FoundedYear = model.FoundedYear;
 
-            await context.SaveChangesAsync();
+            await artistserv.UpdateArtistAsync(artist);
 
             return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> Delete(int id)
         {
-            var artist = await context.Artists
-                .FindAsync(id);
+            var artist = await artistserv.GetArtistByIdAsync(id);
 
             if (artist == null)
             {
@@ -152,16 +147,13 @@ namespace zad1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var artist = await context.Artists
-                .FindAsync(id);
-
+            var artist = await artistserv.GetArtistByIdAsync(id);
             if (artist == null)
             {
                 return NotFound();
             }
 
-            context.Artists.Remove(artist);
-            await context.SaveChangesAsync();
+            await artistserv.DeleteArtistAsync(id);
 
             return RedirectToAction(nameof(Index));
         }

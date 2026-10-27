@@ -38,6 +38,11 @@ namespace Data_Proj
                 .HasOne(sp => sp.Playlist)
                 .WithMany(p => p.SongPlaylists)
                 .HasForeignKey(sp => sp.PlaylistId);
+            modelBuilder.Entity<Artist>()
+            .HasMany(h => h.Songs)
+            .WithOne(d => d.Artist)
+            .HasForeignKey(d => d.ArtistId)
+            .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
