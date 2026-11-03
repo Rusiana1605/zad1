@@ -48,6 +48,7 @@ namespace Proj.Core.Services
         public async Task<List<Song>> GetAllSongAsync()
         {
             return await context.Songs
+                  .Include(s => s.Artist)
                   .Include(x => x.SongPlaylists)
                   .ThenInclude(x => x.Playlist)
                   .ToListAsync();

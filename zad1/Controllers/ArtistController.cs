@@ -27,11 +27,12 @@ namespace zad1.Controllers
                     Id = artist.Id,
                     Name = artist.Name,
                     Genre = artist.Genre,
-                    FoundedYear = artist.FoundedYear
+                    FoundedYear = artist.FoundedYear,
+                    Songs = string.Join(", ", artist.Songs.Select(dp => dp.Title + " " + dp.ReleaseYear))
                 });
             }
 
-            return View(artists);
+            return View(model);
         }
 
         public IActionResult Create()
@@ -145,6 +146,7 @@ namespace zad1.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var artist = await artistserv.GetArtistByIdAsync(id);

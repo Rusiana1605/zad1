@@ -7,46 +7,41 @@
 <h1>Artists</h1>
 
 <p>
-    <a asp-action="Create" class="btn btn-primary">
-        Add Artist
-    </a>
-    <a asp-controller="Song" asp-action="Index" class="btn btn-secondary">View Songs</a>
-    <a asp-controller="Playlist" asp-action="Index" class="btn btn-secondary">View Playlists</a>
+    <a asp-action="Create">Create New Artist</a>
 </p>
-
 
 <table class="table">
     <thead>
         <tr>
-            <th>Name</th>
-            <th>Genre</th>
-            <th>Founded Year</th>
-            <th>Actions</th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Genre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FoundedYear)
+            </th>
+            <th></th>
         </tr>
     </thead>
-
     <tbody>
         @foreach (var artist in Model)
         {
             <tr>
-                <td>@artist.Name</td>
-                <td>@artist.Genre</td>
-                <td>@artist.FoundedYear</td>
                 <td>
-                    <a asp-action="Details"
-                       asp-route-id="@artist.Id">
-                        Details
-                    </a> |
-
-                    <a asp-action="Edit"
-                       asp-route-id="@artist.Id">
-                        Edit
-                    </a> |
-
-                    <a asp-action="Delete"
-                       asp-route-id="@artist.Id">
-                        Delete
-                    </a>
+                    @Html.DisplayFor(modelItem => artist.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => artist.Genre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => artist.FoundedYear)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@artist.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@artist.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@artist.Id">Delete</a>
                 </td>
             </tr>
         }

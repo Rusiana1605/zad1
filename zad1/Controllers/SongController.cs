@@ -35,7 +35,7 @@ namespace zad1.Controllers
                     ArtistName = song.Artist.Name
                 });
             }
-            return View(songs);
+            return View(model);
         }
 
         public async Task<IActionResult> Create()

@@ -28,6 +28,7 @@ namespace Proj.Core.Services
             var hospital = await context.Artists.FindAsync(id);
             if (hospital != null)
             {
+                context.Artists.Remove(hospital);
                 await context.SaveChangesAsync();
             }
         }

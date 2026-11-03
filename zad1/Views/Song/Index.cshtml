@@ -1,31 +1,47 @@
 ﻿@model IEnumerable<zad1.ViewModels.Song.SongIndexViewModel>
 
-<h2>Songs</h2>
+@{
+    ViewData["Title"] = "Songs";
+}
+
+<h1>Songs</h1>
 
 <p>
-    <a asp-action="Create" class="btn btn-primary">Add Song</a>
+    <a asp-action="Create">Create New Song</a>
 </p>
 
 <table class="table">
     <thead>
         <tr>
-            <th>Title</th>
-            <th>Release Year</th>
-            <th>Artist</th> <!-- Добавена колона -->
-            <th>Actions</th>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ReleaseYear)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ArtistName)
+            </th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var song in Model)
         {
             <tr>
-                <td>@item.Title</td>
-                <td>@item.ReleaseYear</td>
-                <td>@item.ArtistName</td> <!-- Добавено име на артиста -->
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                    @Html.DisplayFor(modelItem => song.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => song.ReleaseYear)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => song.ArtistName)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@song.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@song.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@song.Id">Delete</a>
                 </td>
             </tr>
         }

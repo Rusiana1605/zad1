@@ -46,6 +46,29 @@ namespace Data_Proj.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Artists");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            FoundedYear = 1960,
+                            Genre = "Rock",
+                            Name = "The Beatles"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            FoundedYear = 1994,
+                            Genre = "Metal",
+                            Name = "Rammstein"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            FoundedYear = 1981,
+                            Genre = "Metal",
+                            Name = "Metallica"
+                        });
                 });
 
             modelBuilder.Entity("Data_Proj.Entities.Playlist", b =>
@@ -69,6 +92,26 @@ namespace Data_Proj.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Playlists");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Metal music playlist",
+                            Title = "METAAAAAAL"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Rock music hits playlist",
+                            Title = "Rocky"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "Bulgarska muzika",
+                            Title = "BG kupon"
+                        });
                 });
 
             modelBuilder.Entity("Data_Proj.Entities.Song", b =>
@@ -95,6 +138,29 @@ namespace Data_Proj.Migrations
                     b.HasIndex("ArtistId");
 
                     b.ToTable("Songs");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ArtistId = 3,
+                            ReleaseYear = 1984,
+                            Title = "Fade To Black"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ArtistId = 2,
+                            ReleaseYear = 2004,
+                            Title = "Stein um Stein"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ArtistId = 1,
+                            ReleaseYear = 1968,
+                            Title = "Hey,Jude"
+                        });
                 });
 
             modelBuilder.Entity("Data_Proj.Entities.SongPlaylist", b =>
@@ -115,6 +181,23 @@ namespace Data_Proj.Migrations
                     b.HasIndex("SongId1");
 
                     b.ToTable("SongPlaylists");
+
+                    b.HasData(
+                        new
+                        {
+                            SongId = 1,
+                            PlaylistId = 3
+                        },
+                        new
+                        {
+                            SongId = 2,
+                            PlaylistId = 2
+                        },
+                        new
+                        {
+                            SongId = 3,
+                            PlaylistId = 1
+                        });
                 });
 
             modelBuilder.Entity("Data_Proj.Entities.Song", b =>

@@ -24,9 +24,14 @@ namespace Proj.Core.Services
             await context.SaveChangesAsync();
         }
 
-        public Task DeletePlaylistAsync(int id)
+        public async Task DeletePlaylistAsync(int id)
         {
-            throw new NotImplementedException();
+            var playlist = await context.Playlists.FindAsync(id);
+            if(playlist != null)
+            {
+                context.Playlists.Remove(playlist);
+                await context.SaveChangesAsync();
+            }
         }
 
         public async Task<List<Playlist>> GetAllPlaylistsAsync()

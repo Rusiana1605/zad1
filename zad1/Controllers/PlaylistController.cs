@@ -48,28 +48,31 @@ namespace zad1.Controllers
                     Title = model.Title,
                     Description = model.Description,
                 };
-                foreach (var songId in model.SongsIds)
+                if (model.SongsIds != null)
                 {
-                    playlist.SongPlaylists.Add(new SongPlaylist
+                    foreach (var songId in model.SongsIds)
                     {
-                        SongId = songId,
-                    });
+                        playlist.SongPlaylists.Add(new SongPlaylist
+                        {
+                            SongId = songId,
+                        });
+                    }
                 }
                await playserv.AddPlaylistAsync(playlist);
                 return RedirectToAction(nameof(Index));
             }
-            await LoadSongs(model.SongsIds);
+            await LoadSongs(model.SongsIds ?? new List<int>());
             return View(model);
         }
-        public async Task LoadSongs(List<int> selectedSongs = null) // Helper method to load doctors for the multi-select list.  
+        public async Task LoadSongs(List<int> selectedSongs = null)  
         {
-            var doctors = await songserv.GetAllSongAsync();
-            var dd = doctors.Select(d => new
+            var songs = await songserv.GetAllSongAsync();
+            var ss = songs.Select(d => new
             {
                 d.Id,
                 Name = d.Title + " " + d.ReleaseYear
             }).ToList();
-            ViewBag.Songs = new MultiSelectList(doctors, "Id", "Name", selectedSongs);
+            ViewBag.Songs = new MultiSelectList(ss, "Id", "Name", selectedSongs);
         }
         public async Task<IActionResult> Details(int id)
         {

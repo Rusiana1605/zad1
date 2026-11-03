@@ -43,6 +43,10 @@ namespace Data_Proj
             .WithOne(d => d.Artist)
             .HasForeignKey(d => d.ArtistId)
             .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.ApplyConfiguration(new Configuration.ArtistConfiguration());
+            modelBuilder.ApplyConfiguration(new Configuration.SongConfiguration());
+            modelBuilder.ApplyConfiguration(new Configuration.SongPlaylistConfiguration());
+            modelBuilder.ApplyConfiguration(new Configuration.PlaylistConfiguration());
         }
     }
 }
