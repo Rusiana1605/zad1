@@ -9,7 +9,10 @@ namespace Proj.Core.Interfaces
 {
     public interface IArtistSevice
     {
-        Task<List<Artist>> GetAllArtistsAsync();
+        Task<List<Artist>> GetAllArtistsAsync(
+            string? search = null,
+            string? genre = null,
+            string? sortOrder = null);
         Task<Artist?> GetArtistByIdAsync(int id);
         Task<Artist?> GetArtistDetailAsync(int id);
         Task AddArtistAsync(Artist artist);

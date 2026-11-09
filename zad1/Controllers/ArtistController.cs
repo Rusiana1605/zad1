@@ -16,9 +16,11 @@ namespace zad1.Controllers
             this.artistserv = artistserv;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? search,
+            string? genre,
+            string? sortOrder)
         {
-            var artists = await artistserv.GetAllArtistsAsync();
+            var artists = await artistserv.GetAllArtistsAsync(search, genre, sortOrder);
             var model = new List<ArtistIndexViewModel>();
             foreach (var artist in artists)
             {
@@ -31,7 +33,9 @@ namespace zad1.Controllers
                     Songs = string.Join(", ", artist.Songs.Select(dp => dp.Title + " " + dp.ReleaseYear))
                 });
             }
-
+            ViewBag.Search = search;
+            ViewBag.Genre = genre;
+            ViewBag.SortOrder = sortOrder;
             return View(model);
         }
 

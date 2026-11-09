@@ -10,6 +10,41 @@
     <a asp-action="Create">Create New Artist</a>
 </p>
 
+<form asp-controller="Artist" asp-action ="Index" method="get">
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <label class="form-label">Artist Name</label>
+            <input type="text"
+                name="search"
+                value="@ViewBag.Search"
+                class="form-control"
+                placeholder="Search by name..."/>
+        </div>       
+        <div class"col-md-3">
+            <label class="form-label">Artist genre</label>
+            <input type="text"
+                name="genre"
+                value="@ViewBag.Genre"
+                class="form-control"
+                placeholder="Search by genre..."/>
+          
+        </div>
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Sort By</label>
+        <select name="sortOrder" class=":form-control">
+            <option value="name"
+                    selected="@(ViewBag.SortedOrder == "name")">Name A-Z</option>"
+            <option value="genre"
+                    selected="@(ViewBag.SortedOrder == "genre")">Genre A-Z</option>
+            </select>
+    </div>
+    <div class="col-md-2 d-flex align-items-end">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+    
+</form>
+
 <table class="table">
     <thead>
         <tr>

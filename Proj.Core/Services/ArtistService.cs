@@ -5,6 +5,7 @@ using Proj.Core.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -33,9 +34,33 @@ namespace Proj.Core.Services
             }
         }
 
-        public async Task<List<Artist>> GetAllArtistsAsync()
+        public async Task<List<Artist>> GetAllArtistsAsync(
+            string? search,
+            string? genre,
+            string? sortOrder)
         {
-            return await context.Artists.ToListAsync();
+            IQueryable<Artist> query = context.Artists;
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                query = query.Where(t => t.Name.Contains(search));
+            }
+            if (!string.IsNullOrWhiteSpace(genre))
+            {
+                query = query.Where(t => t.Genre != null && t.Genre.Contains(genre));
+            }
+            switch (sortOrder)
+            {
+                case "name":
+                    query = query.OrderBy(h => h.Name);
+                    break;
+                case "genre":
+                    query = query.OrderBy(h => h.Genre);
+                    break;
+                default:
+                    query = query.OrderBy(h => h.Name);
+                    break;
+            }
+            return await query.ToListAsync();
         }
         public async Task<Artist?> GetArtistByIdAsync(int id)
         {
